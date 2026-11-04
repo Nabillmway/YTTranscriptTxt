@@ -314,7 +314,6 @@ fun saveDirectlyToDownloads(context: Context, fileName: String, content: String)
         ).show()
     }
 }
-
 object YouTubeTranscriptExtractor {
 
     private val VIDEO_ID_REGEX = Pattern.compile(
@@ -361,9 +360,9 @@ object YouTubeTranscriptExtractor {
                 val selectedTrack = selectBestTrack(captionTracks, preferredLang)
                 val rawBaseUrl = selectedTrack.getString("baseUrl")
                 val origLang = selectedTrack.optString("languageCode", preferredLang)
-        val needsTranslation = preferredLang.isNotBlank() && !origLang.lowercase().startsWith(preferredLang.lowercase())
-        val baseUrl = if (needsTranslation) "$rawBaseUrl&tlang=$preferredLang" else rawBaseUrl
-        val langCode = if (needsTranslation) "$origLang->$preferredLang" else origLang
+                val needsTranslation = preferredLang.isNotBlank() && !origLang.lowercase().startsWith(preferredLang.lowercase())
+                val baseUrl = if (needsTranslation) "$rawBaseUrl&tlang=$preferredLang" else rawBaseUrl
+                val langCode = if (needsTranslation) "$origLang->$preferredLang" else origLang
 
                 val xmlContent = httpGet(baseUrl)
                 val parsedLines = parseTranscriptXml(xmlContent)
@@ -386,13 +385,15 @@ object YouTubeTranscriptExtractor {
         }
 
     private fun fetchPlayerResponse(videoId: String): JSONObject {
-        val endpoint = "https://www.youtube.com/youtubei/v1/player?prettyPrint=false"
-        val url = URL(endpoint)
         val ua = listOf("com", "google", "android", "youtube").joinToString(".") + "/" + "19.09.37 (Linux; U; Android 14) gzip"
+        val endpoint = "https:" + "//www.youtube.com/youtubei/v1/player?prettyPrint=false"
+        val url = URL(endpoint)
         val conn = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             setRequestProperty("Content-Type", "application/json")
             setRequestProperty("User-Agent", ua)
+            setRequestProperty("Accept-Language", "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7")
+            doOutput = true
             connectTimeout = 15000
             readTimeout = 15000
         }
@@ -404,9 +405,10 @@ object YouTubeTranscriptExtractor {
                     put("clientName", "ANDROID")
                     put("clientVersion", "19.09.37")
                     put("androidSdkVersion", 30)
-                    put("userAgent", ua) 
+                    put("userAgent", ua)
                     put("hl", "en")
-                put("gl", "US")
+                    put("gl", "US")
+                })
             })
         }
 
@@ -439,8 +441,10 @@ object YouTubeTranscriptExtractor {
     }
 
     private fun httpGet(urlString: String): String {
+        val ua = listOf("com", "google", "android", "youtube").joinToString(".") + "/" + "19.09.37 (Linux; U; Android 14) gzip"
         val conn = (URL(urlString).openConnection() as HttpURLConnection).apply {
             requestMethod = "GET"
+            setRequestProperty("User-Agent", ua)
             connectTimeout = 15000
             readTimeout = 15000
         }
