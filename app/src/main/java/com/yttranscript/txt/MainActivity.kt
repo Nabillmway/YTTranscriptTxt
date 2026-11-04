@@ -392,10 +392,7 @@ object YouTubeTranscriptExtractor {
         val conn = (url.openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             setRequestProperty("Content-Type", "application/json")
-            setRequestProperty("User-Agent", ua) U; Android 14) gzip"n        val conn = (url.openConnection() as HttpURLConnection).apply         val baseUrl = if (needsTranslation) "$rawBaseUrl&tlang=$preferredLang" else rawBaseUrl
-        val langCode = if (needsTranslation) "$origLang->$preferredLang" else origLang
-            setRequestProperty("Accept-Language", "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7")
-            doOutput = true
+            setRequestProperty("User-Agent", ua)
             connectTimeout = 15000
             readTimeout = 15000
         }
@@ -407,11 +404,9 @@ object YouTubeTranscriptExtractor {
                     put("clientName", "ANDROID")
                     put("clientVersion", "19.09.37")
                     put("androidSdkVersion", 30)
-                    put("userAgent", ua) = (url.openConnection() as HttpURLConnection).apply         val baseUrl = if (needsTranslation) "$rawBaseUrl&tlang=$preferredLang" else rawBaseUrl
-        val langCode = if (needsTranslation) "$origLang->$preferredLang" else origLang
+                    put("userAgent", ua) 
                     put("hl", "en")
-                    put("gl", "US")
-                })
+                put("gl", "US")
             })
         }
 
